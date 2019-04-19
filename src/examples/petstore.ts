@@ -1,6 +1,5 @@
 import { api, info, license, server } from '../openapi';
 
-// Example
 api({
   openapi: '3.0.0',
   info: info({

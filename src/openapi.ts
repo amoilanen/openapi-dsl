@@ -140,9 +140,25 @@ class Server {
  */
 export const server = (server: Server) => new Server(server);
 
-//TODO:
-class Operation {
+class ExternalDocs {
+  /**
+   * A short description of the target documentation. CommonMark syntax MAY be used for rich text representation.
+   */
+  description?: string
+  /**
+   * The URL for the target documentation. Value MUST be in the format of a URL.
+   */
+  url: string
+  constructor({ description, url }: ExternalDocs) {
+    this.description = description;
+    this.url = url;
+  }
 }
+
+/**
+ * Allows referencing an external resource for extended documentation.
+ */
+export const externalDocs = (externalDocs: ExternalDocs) => new ExternalDocs(externalDocs);
 
 //TODO:
 class Parameter {
@@ -152,6 +168,108 @@ class Parameter {
 class Reference {
 
 }
+
+//TODO
+class RequestBody {
+
+}
+
+//TODO
+class Responses {
+
+}
+
+//TODO
+class Callback {
+
+}
+
+//TODO
+class SecurityRequirement {
+
+}
+
+class Operation {
+  /**
+   * A list of tags for API documentation control.
+   * Tags can be used for logical grouping of operations by resources or any other qualifier.
+   */
+  tags?: string[]
+  /**
+   * A short summary of what the operation does.
+   */
+  summary?: string
+  /**
+   * A verbose explanation of the operation behavior. CommonMark syntax MAY be used for rich text representation.
+   */
+  description?: string
+  /**
+   * Additional external documentation for this operation.
+   */
+  externalDocs?: ExternalDocs
+  /**
+   * Unique string used to identify the operation. The id MUST be unique among all operations described in the API.
+   * The operationId value is case-sensitive. Tools and libraries MAY use the operationId to uniquely identify an operation,
+   * therefore, it is RECOMMENDED to follow common programming naming conventions.
+   */
+  operationId?: string
+  /**
+   * A list of parameters that are applicable for this operation. If a parameter is already defined at the Path Item,
+   * the new definition will override it but can never remove it. The list MUST NOT include duplicated parameters.
+   * A unique parameter is defined by a combination of a name and location.
+   * The list can use the Reference Object to link to parameters that are defined at the OpenAPI Object's components/parameters.
+   */
+  parameters?: (Parameter | Reference)[]
+  /**
+   * The request body applicable for this operation. The requestBody is only supported in HTTP methods
+   * where the HTTP 1.1 specification RFC7231 has explicitly defined semantics for request bodies. 
+   * In other cases where the HTTP spec is vague, requestBody SHALL be ignored by consumers.
+   */
+  requestBody?: RequestBody | Reference
+  /**
+   * The list of possible responses as they are returned from executing this operation.
+   */
+  responses: Responses
+  /**
+   * A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object.
+   * Each value in the map is a Callback Object that describes a request that may be initiated by the API provider and the expected responses.
+   * The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.
+   */
+  callbacks?: { [name: string]: (Callback | Reference) }
+  /**
+   * Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is false.
+   */
+  deprecated?: boolean
+  /**
+   * A declaration of which security mechanisms can be used for this operation. The list of values includes alternative security requirement objects that can be used.
+   * Only one of the security requirement objects need to be satisfied to authorize a request. This definition overrides any declared top-level security.
+   * To remove a top-level security declaration, an empty array can be used.
+   */
+  security: SecurityRequirement
+  /**
+   * An alternative server array to service this operation. If an alternative server object is specified at the Path Item Object or Root level, it will be overridden by this value.
+   */
+  servers?: Server[]
+  constructor({ tags, summary, description, externalDocs, operationId, parameters, requestBody, responses, callbacks, deprecated, security, servers }: Operation) {
+    this.tags = tags;
+    this.summary = summary;
+    this.description = description;
+    this.externalDocs = externalDocs;
+    this.operationId = operationId;
+    this.parameters = parameters;
+    this.requestBody = requestBody;
+    this.responses = responses;
+    this.callbacks = callbacks;
+    this.deprecated = deprecated;
+    this.security = security;
+    this.servers = servers;
+  }
+}
+
+/**
+ * Describes a single API operation on a path.
+ */
+export const operation = (operation: Operation) => new Operation(operation);
 
 class Path {
   /**
@@ -164,16 +282,53 @@ class Path {
    * An optional, string summary, intended to apply to all operations in this path.
    */
   summary?: string
+  /**
+   * An optional, string description, intended to apply to all operations in this path.
+   * CommonMark syntax MAY be used for rich text representation.
+   */
   description?: string
+  /**
+   * A definition of a GET operation on this path.
+   */
   get?: Operation
+  /**
+   * A definition of a PUT operation on this path.
+   */
   put?: Operation
+  /**
+   * A definition of a POST operation on this path.
+   */
   post?: Operation
+  /**
+   * A definition of a DELETE operation on this path.
+   */
   _delete?: Operation
+  /**
+   * A definition of a OPTIONS operation on this path.
+   */
   options?: Operation
+  /**
+   * A definition of a HEAD operation on this path.
+   */
   head?: Operation
+  /**
+   * A definition of a PATCH operation on this path.
+   */
   patch?: Operation
+  /**
+   * A definition of a TRACE operation on this path.
+   */
   trace?: Operation
+  /**
+   * An alternative server array to service all operations in this path.
+   */
   servers?: Server[]
+  /**
+   * A list of parameters that are applicable for all the operations described under this path.
+   * These parameters can be overridden at the operation level, but cannot be removed there.
+   * The list MUST NOT include duplicated parameters. A unique parameter is defined by a combination of a name and location.
+   * The list can use the Reference Object to link to parameters that are defined at the OpenAPI Object's components/parameters.
+   */
   parameters?: (Parameter | Reference)[]
   constructor({ $ref, summary, description, get, put, post,
     _delete, options, head, patch, trace, servers, parameters }: Path) {
