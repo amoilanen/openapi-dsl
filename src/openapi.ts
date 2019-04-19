@@ -140,6 +140,69 @@ class Server {
  */
 export const server = (server: Server) => new Server(server);
 
+//TODO:
+class Operation {
+}
+
+//TODO:
+class Parameter {
+}
+
+//TODO:
+class Reference {
+
+}
+
+class Path {
+  /**
+   * Allows for an external definition of this path item.
+   * The referenced structure MUST be in the format of a Path Item Object.
+   * If there are conflicts between the referenced definition and this Path Item's definition, the behavior is undefined.
+   */
+  $ref:  string
+  /**
+   * An optional, string summary, intended to apply to all operations in this path.
+   */
+  summary?: string
+  description?: string
+  get?: Operation
+  put?: Operation
+  post?: Operation
+  _delete?: Operation
+  options?: Operation
+  head?: Operation
+  patch?: Operation
+  trace?: Operation
+  servers?: Server[]
+  parameters?: (Parameter | Reference)[]
+  constructor({ $ref, summary, description, get, put, post,
+    _delete, options, head, patch, trace, servers, parameters }: Path) {
+    this.$ref = $ref;
+    this.summary = summary;
+    this.description = description;
+    this.get = get;
+    this.put = put;
+    this.post = post;
+    this._delete = _delete;
+    this.options = options;
+    this.head = head;
+    this.patch = patch;
+    this.trace = trace;
+    this.servers = servers;
+    this.parameters = parameters;
+  }
+}
+
+/**
+ * A relative path to an individual endpoint. The field name MUST begin with a slash.
+ * The path is appended (no relative URL resolution) to the expanded URL from the Server Object's url field
+ * in order to construct the full URL. Path templating is allowed.
+ * When matching URLs, concrete (non-templated) paths would be matched before their templated counterparts.
+ * Templated paths with the same hierarchy but different templated names MUST NOT exist as they are identical.
+ * In case of ambiguous matching, it's up to the tooling to decide which one to use.
+ */
+export const path = (path: Path) => new Path(path);
+
 class Api {
   /**
    * This string MUST be the semantic version number of the OpenAPI Specification version that the OpenAPI document uses.
@@ -157,27 +220,19 @@ class Api {
    * the default value would be a Server Object with a url value of /.
    */
   servers?: Server[]
-  constructor({ openapi, info, servers }: Api) {
+  /**
+   * The available paths and operations for the API.
+   */
+  paths: Path[]
+  constructor({ openapi, info, servers, paths }: Api) {
     this.openapi = openapi;
     this.info = info;
     this.servers = servers;
+    this.paths = paths;
   }
 }
 
+/**
+ * This is the root document object of the OpenAPI document.
+ */
 export const api = (api: Api) => new Api(api);
-
-api({
-  openapi: '3.0.0',
-  info: info({
-    version: '1.0.0',
-    title: 'Swagger Petstore',
-    license: license({
-      name: 'MIT'
-    })
-  }),
-  servers: [
-    server({
-      url: 'http://petstore.swagger.io/v1'
-    })
-  ]
-});
