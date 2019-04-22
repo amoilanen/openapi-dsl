@@ -16,7 +16,7 @@ class Contact {
    * The email address of the contact person/organization. MUST be in the format of an email address.
    */
   email: string
-  constructor({ name, url, email}: Contact) {
+  constructor({ name, url, email }: Contact) {
     this.name = name;
     this.url = url;
     this.email = email;
@@ -140,7 +140,7 @@ class Server {
  */
 export const server = (server: Server) => new Server(server);
 
-class ExternalDocs {
+class ExternalDocumentation {
   /**
    * A short description of the target documentation. CommonMark syntax MAY be used for rich text representation.
    */
@@ -149,7 +149,7 @@ class ExternalDocs {
    * The URL for the target documentation. Value MUST be in the format of a URL.
    */
   url: string
-  constructor({ description, url }: ExternalDocs) {
+  constructor({ description, url }: ExternalDocumentation) {
     this.description = description;
     this.url = url;
   }
@@ -158,7 +158,7 @@ class ExternalDocs {
 /**
  * Allows referencing an external resource for extended documentation.
  */
-export const externalDocs = (externalDocs: ExternalDocs) => new ExternalDocs(externalDocs);
+export const externalDocumentation = (externalDocs: ExternalDocumentation) => new ExternalDocumentation(externalDocs);
 
 class Parameter {
   /**
@@ -227,23 +227,80 @@ class Reference {
 export const reference = (reference: Reference) => new Reference(reference);
 
 //TODO:
+class Xml {
+
+}
+
+//TODO:
+class Discriminator {
+
+}
+
 class Schema {
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   title
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   multipleOf
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   maximum
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   exclusiveMaximum
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   minimum
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   exclusiveMinimum
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   maxLength
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   minLength
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   pattern
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   maxItems
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   minItems
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   uniqueItems
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   maxProperties
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   minProperties
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
   required
-  enum
+  /**
+   * As per JSON Schema definition and follow the same specifications.
+   */
+  _enum
   /**
    * Value MUST be a string. Multiple types via an array are not supported.
    */
@@ -273,10 +330,109 @@ class Schema {
    */
   properties?: Schema
   /**
-   * 
+   * Property definitions MUST be a Schema Object and not a standard JSON Schema (inline or referenced).
+additionalProperties - Value can be boolean or object. Inline or referenced schema MUST be of a Schema Object and not a standard JSON Schema. Consistent with JSON Schema, additionalProperties defaults to true.
    */
-  additionalProperties: Schema
+  additionalProperties?: Schema
+  /**
+   * CommonMark syntax MAY be used for rich text representation.
+   */
+  description?: string
+  /**
+   * See Data Type Formats for further details. While relying on JSON Schema's defined formats, the OAS offers a few additional predefined formats.
+   */
+  format?
+  /**
+   * The default value represents what would be assumed by the consumer of the input as the value of the schema if one is not provided.
+   * Unlike JSON Schema, the value MUST conform to the defined type for the Schema Object defined at the same level.
+   * For example, if type is string, then default can be "foo" but cannot be 1.
+   */
+  _default?
+  /**
+   * Allows sending a null value for the defined schema. Default value is false.
+   */
+  nullable?: boolean
+  /**
+   * Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description.
+   * See Composition and Inheritance for more details.
+   */
+  discriminator?: Discriminator
+  /**
+   * Relevant only for Schema "properties" definitions. Declares the property as "read only". This means that it MAY be sent as part of a response but SHOULD NOT be sent as part of the request.
+   * If the property is marked as readOnly being true and is in the required list, the required will take effect on the response only.
+   * A property MUST NOT be marked as both readOnly and writeOnly being true. Default value is false.
+   */
+  readOnly?: boolean
+  /**
+   * Relevant only for Schema "properties" definitions. Declares the property as "write only". Therefore, it MAY be sent as part of a request but SHOULD NOT be sent as part of the response.
+   * If the property is marked as writeOnly being true and is in the required list, the required will take effect on the request only.
+   * A property MUST NOT be marked as both readOnly and writeOnly being true. Default value is false.
+   */
+  writeOnly?: boolean
+  /**
+   * This MAY be used only on properties schemas. It has no effect on root schemas. Adds additional metadata to describe the XML representation of this property.
+   */
+  xml?: Xml
+  /**
+   * Additional external documentation for this schema.
+   */
+  externalDocs?: ExternalDocumentation
+  /**
+   * A free-form property to include an example of an instance for this schema. To represent examples that cannot be naturally represented in JSON or YAML,
+   * a string value can be used to contain the example with escaping where necessary.
+   */
+  example?
+  /**
+   * Specifies that a schema is deprecated and SHOULD be transitioned out of usage. Default value is false.
+   */
+  deprecated?: boolean
+  constructor({ title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength,
+    minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, _enum,
+    type, allOf, oneOf, anyOf, not, items, properties, additionalProperties, description, format, _default,
+    nullable, discriminator, readOnly, writeOnly, xml, externalDocs, example, deprecated }: Schema) {
+    this.title = title;
+    this.multipleOf = multipleOf;
+    this.maximum = maximum;
+    this.exclusiveMaximum = exclusiveMaximum;
+    this.minimum = minimum;
+    this.exclusiveMinimum = exclusiveMinimum;
+    this.maxLength = maxLength;
+    this.minLength = minLength;
+    this.pattern = pattern;
+    this.maxItems = maxItems;
+    this.minItems = minItems;
+    this.uniqueItems = uniqueItems;
+    this.maxProperties = maxProperties;
+    this.minProperties = minProperties;
+    this.required = required;
+    this._enum = _enum;
+    this.type = type;
+    this.allOf = allOf;
+    this.oneOf = oneOf;
+    this.anyOf = anyOf;
+    this.not = not;
+    this.items = items;
+    this.properties = properties;
+    this.additionalProperties = additionalProperties;
+    this.description = description;
+    this.format = format;
+    this._default = _default;
+    this.nullable = nullable;
+    this.discriminator = discriminator;
+    this.readOnly = readOnly;
+    this.writeOnly = writeOnly;
+    this.xml = xml;
+    this.externalDocs = externalDocs;
+    this.example = example;
+    this.deprecated = deprecated;
+  }
 }
+
+/**
+ * The Schema Object allows the definition of input and output data types. These types can be objects, but also primitives and arrays.
+ * This object is an extended subset of the JSON Schema Specification Wright Draft 00.
+ */
+export const schema = (schema: Schema) => new Schema(schema);
 
 //TODO:
 class Example {
@@ -304,7 +460,7 @@ class MediaType {
    * The examples field is mutually exclusive of the example field. Furthermore, if referencing a schema which contains an example,
    * the examples value SHALL override the example provided by the schema.
    */
-  examples?: { [name : string]: (Example | Reference) }
+  examples?: { [name: string]: (Example | Reference) }
   /**
    * A map between a property name and its encoding information. The key, being the property name,
    * MUST exist in the schema as a property. The encoding object SHALL only apply to requestBody
@@ -378,7 +534,7 @@ class Operation {
   /**
    * Additional external documentation for this operation.
    */
-  externalDocs?: ExternalDocs
+  externalDocs?: ExternalDocumentation
   /**
    * Unique string used to identify the operation. The id MUST be unique among all operations described in the API.
    * The operationId value is case-sensitive. Tools and libraries MAY use the operationId to uniquely identify an operation,
@@ -391,7 +547,7 @@ class Operation {
    * A unique parameter is defined by a combination of a name and location.
    * The list can use the Reference Object to link to parameters that are defined at the OpenAPI Object's components/parameters.
    */
-  parameters?: (Parameter | Reference)[]
+  parameters?: (Parameter | Reference)[]
   /**
    * The request body applicable for this operation. The requestBody is only supported in HTTP methods
    * where the HTTP 1.1 specification RFC7231 has explicitly defined semantics for request bodies. 
@@ -449,7 +605,7 @@ class Path {
    * The referenced structure MUST be in the format of a Path Item Object.
    * If there are conflicts between the referenced definition and this Path Item's definition, the behavior is undefined.
    */
-  $ref:  string
+  $ref: string
   /**
    * An optional, string summary, intended to apply to all operations in this path.
    */
